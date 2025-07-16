@@ -79,13 +79,14 @@ To run this project locally, follow these steps:
    ```
 > **⚠️ Note:** This script must be run in a Bash-compatible terminal (Linux, macOS, or WSL/Git Bash on Windows).
 
-
 ✅ The script will:
 - Check that you are using Java 23.
 - Build the project with Maven.
 - Start the Spring Boot application.
 
 If the wrong Java version is detected, it will stop with an error message.
+
+> ℹ️ Info: The application automatically creates 5 dummy items on startup to get you started, but you can create more using the provided API end
 
 - H2: http://localhost:8080/h2-console/login.do
   ```bash
