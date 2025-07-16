@@ -1,4 +1,4 @@
-package co.com.applicationcorp.config;
+package co.com.arrive.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

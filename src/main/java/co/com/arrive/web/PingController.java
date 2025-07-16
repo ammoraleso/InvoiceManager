@@ -1,4 +1,4 @@
-package co.com.applicationcorp.web;
+package co.com.arrive.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

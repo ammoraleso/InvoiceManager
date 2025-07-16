@@ -1,4 +1,4 @@
-package co.com.applicationcorp;
+package co.com.arrive;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
