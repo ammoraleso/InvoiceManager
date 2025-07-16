@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-public class Item {
+public class Item extends AuditableEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

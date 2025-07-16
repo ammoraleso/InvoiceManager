@@ -17,7 +17,7 @@ import java.util.List;
 
 @Entity
 @Data
-public class Invoice {
+public class Invoice extends AuditableEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

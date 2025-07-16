@@ -2,6 +2,7 @@ package co.com.arrive.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -10,9 +11,9 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-public class InvoiceLineItem {
+public class InvoiceLineItem extends AuditableEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -21,7 +22,6 @@ public class InvoiceLineItem {
     @ManyToOne
     private Item item;
 
-    private BigDecimal unitPrice;
     private Integer quantity;
     private BigDecimal totalPrice;
 }
