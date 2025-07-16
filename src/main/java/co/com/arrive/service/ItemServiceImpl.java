@@ -31,4 +31,12 @@ public class ItemServiceImpl implements ItemService {
         List<Item> courses = pageResult.getContent();
         return courses.stream().map(course -> modelMapper.map(course, ItemDTO.class)).collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public ItemDTO createItem(ItemDTO itemDTO) {
+        Item item = modelMapper.map(itemDTO, Item.class);
+        Item savedItem = itemRepository.save(item);
+        return modelMapper.map(savedItem, ItemDTO.class);
+    }
 }

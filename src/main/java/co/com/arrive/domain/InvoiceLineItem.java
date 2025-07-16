@@ -23,5 +23,6 @@ public class InvoiceLineItem extends AuditableEntity {
     private Item item;
 
     private Integer quantity;
+    private BigDecimal basePrice;
     private BigDecimal totalPrice;
 }

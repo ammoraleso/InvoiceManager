@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ItemService {
     List<ItemDTO> getAll(int page, int size);
+
+    ItemDTO createItem(ItemDTO request);
 }
