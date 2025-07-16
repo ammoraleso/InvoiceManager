@@ -8,6 +8,7 @@ import co.com.arrive.dto.InvoiceLineItemDTO;
 import co.com.arrive.repository.InvoiceRepository;
 import co.com.arrive.repository.ItemRepository;
 import co.com.arrive.utils.InvoiceStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
@@ -58,14 +60,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoiceRepository.save(invoice);
 
+        log.info("Invoice created with ID: {}, Total Amount: {}", invoice.getId(), invoice.getTotalAmount());
+
         return modelMapper.map(invoice, InvoiceDTO.class);
     }
 
     @Override
     @Transactional
     public InvoiceDTO addItemsToInvoice(Long invoiceId, List<InvoiceLineItemDTO> newItems) {
-        Invoice invoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Invoice not found with id: " + invoiceId));
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow(() -> new RuntimeException("Invoice not found with id: " + invoiceId));
 
         if (invoice.getDeletedAt() != null) {
             throw new RuntimeException("Invoice is deleted and cannot be updated.");
@@ -80,18 +83,52 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoiceRepository.save(invoice);
 
+        log.info("Invoice updated. ID: {}, New Total Amount: {}", invoice.getId(), invoice.getTotalAmount());
+
         return modelMapper.map(invoice, InvoiceDTO.class);
     }
 
     @Override
     @Transactional(readOnly = true)
     public InvoiceDTO getById(Long id) {
-        Invoice invoice = invoiceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Invoice not found with id: " + id));
+        Invoice invoice = invoiceRepository.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found with id: " + id));
 
         if (invoice.getDeletedAt() != null) {
             throw new RuntimeException("Invoice with id " + id + " has been deleted.");
         }
+
+        return modelMapper.map(invoice, InvoiceDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public InvoiceDTO markAsPaid(Long invoiceId, BigDecimal amountPaid) {
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow(() -> new RuntimeException("Invoice not found with id: " + invoiceId));
+
+        if (invoice.getDeletedAt() != null) {
+            throw new RuntimeException("Invoice with id " + invoiceId + " has been deleted.");
+        }
+
+        if (invoice.getDeletedAt() != null) {
+            throw new RuntimeException("Invoice is deleted and cannot be paid.");
+        }
+
+        if (invoice.getStatus() == InvoiceStatus.PAID) {
+            throw new RuntimeException("Invoice is already paid.");
+        }
+
+        if (amountPaid == null) {
+            throw new RuntimeException("Payment amount is required.");
+        }
+
+        if (amountPaid.compareTo(invoice.getTotalAmount()) != 0) {
+            throw new RuntimeException("Payment amount must match the total invoice amount. Expected: " + invoice.getTotalAmount() + ", Provided: " + amountPaid);
+        }
+
+        invoice.setStatus(InvoiceStatus.PAID);
+        invoice.setPaidAt(LocalDateTime.now());
+
+        invoiceRepository.save(invoice);
 
         return modelMapper.map(invoice, InvoiceDTO.class);
     }
@@ -143,12 +180,11 @@ public class InvoiceServiceImpl implements InvoiceService {
         return lineItem;
     }
 
-    private List<InvoiceLineItem> processLineItemsToSave(List<InvoiceLineItemDTO> lineItems, Invoice invoice) {
+    private void processLineItemsToSave(List<InvoiceLineItemDTO> lineItems, Invoice invoice) {
         List<InvoiceLineItem> finalLineItems = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (InvoiceLineItemDTO dto : lineItems) {
-            Item item = itemRepository.findById(dto.getItem().getId())
-                    .orElseThrow(() -> new RuntimeException("Item not found: " + dto.getItem().getId()));
+            Item item = itemRepository.findById(dto.getItem().getId()).orElseThrow(() -> new RuntimeException("Item not found: " + dto.getItem().getId()));
 
             InvoiceLineItem lineItem = fillLineItemObject(dto, invoice, item);
             totalAmount = totalAmount.add(lineItem.getTotalPrice());
@@ -156,8 +192,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
         invoice.setTotalAmount(totalAmount);
         invoice.setLineItems(finalLineItems);
-
-        return finalLineItems;
     }
 
 }

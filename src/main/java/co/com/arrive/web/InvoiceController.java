@@ -2,9 +2,8 @@ package co.com.arrive.web;
 
 import co.com.arrive.dto.InvoiceDTO;
 import co.com.arrive.dto.InvoiceLineItemDTO;
-import co.com.arrive.dto.ItemDTO;
+import co.com.arrive.dto.PaymentRequestDTO;
 import co.com.arrive.service.InvoiceService;
-import co.com.arrive.service.ItemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +26,7 @@ public class InvoiceController {
     private InvoiceService invoiceService;
 
     @GetMapping
-    public List<InvoiceDTO> getAll(@RequestParam(defaultValue = "0") int page,
-                                   @RequestParam(defaultValue = "10") int size) {
+    public List<InvoiceDTO> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return invoiceService.getAll(page, size);
     }
 
@@ -44,9 +42,12 @@ public class InvoiceController {
     }
 
     @PutMapping("/{invoiceId}/items")
-    public InvoiceDTO addItemsToInvoice(@PathVariable Long invoiceId,
-                                        @RequestBody List<InvoiceLineItemDTO> lineItems) {
+    public InvoiceDTO addItemsToInvoice(@PathVariable Long invoiceId, @RequestBody List<InvoiceLineItemDTO> lineItems) {
         return invoiceService.addItemsToInvoice(invoiceId, lineItems);
     }
 
+    @PostMapping("/{id}/pay")
+    public InvoiceDTO payInvoice(@PathVariable Long id, @RequestBody PaymentRequestDTO paymentRequestDTO) {
+        return invoiceService.markAsPaid(id, paymentRequestDTO.getAmountPaid());
+    }
 }

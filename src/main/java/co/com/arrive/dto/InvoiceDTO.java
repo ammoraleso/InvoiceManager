@@ -15,6 +15,7 @@ public class InvoiceDTO {
     private BigDecimal totalAmount;
     private InvoiceStatus status;
     private List<InvoiceLineItemDTO> lineItems;
+    private LocalDateTime paidAt;
 }
 
 

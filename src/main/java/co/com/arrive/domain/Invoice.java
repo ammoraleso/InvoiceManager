@@ -31,5 +31,7 @@ public class Invoice extends AuditableEntity{
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
     private List<InvoiceLineItem> lineItems;
+
+    private LocalDateTime paidAt;
 }
 
