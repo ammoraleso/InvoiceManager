@@ -43,9 +43,6 @@ http://localhost:8080/doc/swagger-ui/index.html
 ## Postman Collection
 Inside the resource folder, you can download the full Postman collection to test the API.
 
-## Testing Coverage
-All the methods in the UserServices class (CRUD) are covered with passing tests.
-
 ## Architecture Diagram
 Below is a diagram of the application architecture:
 ![Architecture](src/main/resources/Arquitecture/Arquitecture.png)
