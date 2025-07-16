@@ -55,6 +55,45 @@ The application follows the MVC (Model-View-Controller) pattern, where Controlle
 
 ## Run in local
 
+To run this project locally, follow these steps:
+
+1. **Ensure you have Java 23 installed and active in your environment.**  
+   You can check your Java version with:
+   ```bash
+   java -version
+   ```
+   Expected output should include:
+   ```
+   openjdk version "23"
+   ```
+
+2. **Make sure the `start.sh` script is executable.**  
+   If you just cloned the repo, give it execute permissions:
+   ```bash
+   chmod +x start.sh
+   ```
+
+3. **Run the application using the script:**
+   ```bash
+   ./start.sh
+   ```
+> **⚠️ Note:** This script must be run in a Bash-compatible terminal (Linux, macOS, or WSL/Git Bash on Windows).
+
+
+✅ The script will:
+- Check that you are using Java 23.
+- Build the project with Maven.
+- Start the Spring Boot application.
+
+If the wrong Java version is detected, it will stop with an error message.
+
+- H2: http://localhost:8080/h2-console/login.do
+  ```bash
+  spring.datasource.username=admin
+  spring.datasource.password=admin
+  datasource.url=jdbc:h2:mem:management-system
+  ```
+- Swagger: http://localhost:8080/doc/swagger-ui/index.html
 
 ## Useful Documentation
 
