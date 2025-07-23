@@ -25,6 +25,7 @@ public class Invoice extends AuditableEntity{
     private String customer;
     private LocalDateTime date;
     private BigDecimal totalAmount;
+    private BigDecimal partialAmount;
 
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status;

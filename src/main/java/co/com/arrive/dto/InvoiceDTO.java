@@ -13,6 +13,7 @@ public class InvoiceDTO {
     private String customer;
     private LocalDateTime date;
     private BigDecimal totalAmount;
+    private BigDecimal partialAmount;
     private InvoiceStatus status;
     private List<InvoiceLineItemDTO> lineItems;
     private LocalDateTime paidAt;

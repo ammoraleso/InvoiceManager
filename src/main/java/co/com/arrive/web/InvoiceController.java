@@ -50,4 +50,9 @@ public class InvoiceController {
     public InvoiceDTO payInvoice(@PathVariable Long id, @RequestBody PaymentRequestDTO paymentRequestDTO) {
         return invoiceService.markAsPaid(id, paymentRequestDTO.getAmountPaid());
     }
+
+    @PostMapping("/partial/{id}/pay")
+    public InvoiceDTO payPartiallyInvoice(@PathVariable Long id, @RequestBody PaymentRequestDTO paymentRequestDTO) {
+        return invoiceService.payInvoice(id, paymentRequestDTO.getAmountPaid());
+    }
 }

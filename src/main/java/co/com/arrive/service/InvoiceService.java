@@ -19,4 +19,6 @@ public interface InvoiceService {
     InvoiceDTO getById(Long id);
 
     InvoiceDTO markAsPaid(Long invoiceId, BigDecimal amountPaid);
+
+    InvoiceDTO payInvoice(Long invoiceId, BigDecimal amountPaid);
 }

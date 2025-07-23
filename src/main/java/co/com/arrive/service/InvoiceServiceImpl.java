@@ -109,10 +109,6 @@ public class InvoiceServiceImpl implements InvoiceService {
             throw new RuntimeException("Invoice with id " + invoiceId + " has been deleted.");
         }
 
-        if (invoice.getDeletedAt() != null) {
-            throw new RuntimeException("Invoice is deleted and cannot be paid.");
-        }
-
         if (invoice.getStatus() == InvoiceStatus.PAID) {
             throw new RuntimeException("Invoice is already paid.");
         }
@@ -127,6 +123,44 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoice.setStatus(InvoiceStatus.PAID);
         invoice.setPaidAt(LocalDateTime.now());
+
+        invoiceRepository.save(invoice);
+
+        return modelMapper.map(invoice, InvoiceDTO.class);
+    }
+
+    @Override
+    public InvoiceDTO payInvoice(Long invoiceId, BigDecimal amountPaid) {
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow(() -> new RuntimeException("Invoice not found with id: " + invoiceId));
+
+        if (invoice.getDeletedAt() != null) {
+            throw new RuntimeException("Invoice with id " + invoiceId + " has been deleted.");
+        }
+
+        if (invoice.getStatus() == InvoiceStatus.PAID) {
+            throw new RuntimeException("Invoice is already paid.");
+        }
+
+        if (amountPaid == null) {
+            throw new RuntimeException("Payment amount is required.");
+        }
+
+        if(invoice.getPartialAmount() == null) {
+            invoice.setPartialAmount(new BigDecimal(0));
+        }
+
+        BigDecimal difference = invoice.getTotalAmount().subtract(invoice.getPartialAmount());
+
+        if(difference.compareTo(amountPaid) == 1) {
+            invoice.setPartialAmount(invoice.getPartialAmount().add(amountPaid));
+            invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
+        } else if (difference.compareTo(amountPaid) == 0) {
+            invoice.setPartialAmount(invoice.getPartialAmount().add(amountPaid));
+            invoice.setStatus(InvoiceStatus.PAID);
+            invoice.setDate(LocalDateTime.now());
+        } else if (difference.compareTo(amountPaid) == -1) {
+            throw new RuntimeException("Payment amount higher to difference to pay, please use other payment amount.");
+        }
 
         invoiceRepository.save(invoice);
 
